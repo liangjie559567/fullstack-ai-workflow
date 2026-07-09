@@ -3,16 +3,20 @@
   "repos": [
     {
       "name": "gsd",
-      "url": "https://github.com/liangjie559567/gsd.git",
-      "ref": "v0.1.0",
+      "url": "https://github.com/open-gsd/gsd-core.git",
+      "ref": "v1.6.1",
       "enabled": true,
+      "optional": false,
+      "verified_with_template": "0.1.0",
       "post_install": []
     },
     {
       "name": "superpowers",
-      "url": "https://github.com/liangjie559567/superpowers.git",
-      "ref": "v0.1.0",
+      "url": "https://github.com/obra/superpowers.git",
+      "ref": "v6.1.1",
       "enabled": true,
+      "optional": false,
+      "verified_with_template": "0.1.0",
       "post_install": []
     },
     {
@@ -20,6 +24,8 @@
       "url": "https://github.com/liangjie559567/gstack-like.git",
       "ref": "v0.1.0",
       "enabled": false,
+      "optional": true,
+      "verified_with_template": "0.1.0",
       "post_install": []
     },
     {
@@ -27,6 +33,8 @@
       "url": "https://github.com/liangjie559567/fullstack-ai-workflow.git",
       "ref": "v0.1.0",
       "enabled": true,
+      "optional": false,
+      "verified_with_template": "0.1.0",
       "post_install": []
     }
   ]

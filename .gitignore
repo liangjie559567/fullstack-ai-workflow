@@ -33,3 +33,6 @@ venv/
 
 # AI workflow runtime vendor cache
 .ai/vendor/
+
+# Local manifest for dogfooding (use workflow-repos.manifest.example.json in repo)
+workflow-repos.manifest.json

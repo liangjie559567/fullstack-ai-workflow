@@ -4,6 +4,9 @@ on:
   push:
     branches: [ main ]
   pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 4 * * 1"
 
 jobs:
   validate:
@@ -19,8 +22,11 @@ jobs:
           test -f VERSION
           test -f workflow-repos.manifest.example.json
           test -f scripts/bootstrap-workflow.sh
+          test -f scripts/bootstrap-workflow.ps1
           test -f scripts/apply-workflow-templates.sh
+          test -f scripts/apply-workflow-templates.ps1
           test -f scripts/workflow-dispatch.sh
+          test -f scripts/workflow-dispatch.ps1
           test -f templates/CLAUDE.md
           test -f templates/AGENTS.md
           test -f templates/testing.instructions.md
@@ -34,8 +40,38 @@ jobs:
           bash -n scripts/apply-workflow-templates.sh
           bash -n scripts/workflow-dispatch.sh
           bash -n scripts/workflow-bootstrap-all.sh
+          bash -n scripts/verify-vendor-deps.sh
+          bash -n scripts/upgrade-workflow-templates.sh
           bash -n templates/claude/pre-commit-check.sh
+
+      - name: Verify PowerShell scripts syntax
+        shell: pwsh
+        run: |
+          $scripts = @(
+            "scripts/bootstrap-workflow.ps1",
+            "scripts/apply-workflow-templates.ps1",
+            "scripts/workflow-dispatch.ps1",
+            "scripts/workflow-bootstrap-all.ps1",
+            "scripts/verify-vendor-deps.ps1",
+            "scripts/upgrade-workflow-templates.ps1"
+          )
+          foreach ($script in $scripts) {
+            $null = [scriptblock]::Create((Get-Content -Raw $script))
+          }
 
       - name: Verify version format
         run: |
           grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$' VERSION
+
+  verify-vendor:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
+    continue-on-error: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Verify vendor deps
+        run: |
+          cp workflow-repos.manifest.example.json workflow-repos.manifest.json
+          bash scripts/verify-vendor-deps.sh --remote-only workflow-repos.manifest.json

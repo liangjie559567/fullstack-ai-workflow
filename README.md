@@ -23,8 +23,15 @@
 │   ├── bootstrap-workflow.sh
 │   ├── bootstrap-workflow.ps1
 │   ├── apply-workflow-templates.sh
+│   ├── apply-workflow-templates.ps1
 │   ├── workflow-dispatch.sh
-│   └── workflow-bootstrap-all.sh
+│   ├── workflow-dispatch.ps1
+│   ├── workflow-bootstrap-all.sh
+│   ├── workflow-bootstrap-all.ps1
+│   ├── verify-vendor-deps.sh
+│   ├── verify-vendor-deps.ps1
+│   ├── upgrade-workflow-templates.sh
+│   └── upgrade-workflow-templates.ps1
 ├── templates/
 │   ├── CLAUDE.md
 │   ├── AGENTS.md
@@ -57,6 +64,12 @@
 ## 发布定位
 
 这个仓库用于被业务项目 **拉取 / vendor / fork / 镜像**，而不是直接作为业务代码仓库使用。
+
+本仓库角色是 **TEMPLATE_SOURCE**：
+- `templates/` 是发布模板的唯一权威源
+- 不建议在本仓库根目录执行 `init`
+- 业务项目通过 manifest + bootstrap 消费本仓库
+- 如需自举测试，请使用单独业务项目或示例项目
 
 推荐使用方式：
 
@@ -108,19 +121,32 @@ workflow-repos.manifest.json
 在业务项目中执行：
 
 ```bash
-bash scripts/bootstrap-workflow.sh workflow-repos.manifest.json
+bash scripts/workflow-dispatch.sh install
 ```
 
 ### 3. 应用模板到当前项目
 
 ```bash
-bash scripts/apply-workflow-templates.sh .ai/vendor/fullstack-ai-workflow/templates
+bash scripts/workflow-dispatch.sh init
 ```
 
 ### 4. 一键执行
 
 ```bash
 bash scripts/workflow-bootstrap-all.sh
+```
+
+### Windows (PowerShell)
+
+```powershell
+.\scripts\workflow-dispatch.ps1 install
+.\scripts\workflow-dispatch.ps1 init
+```
+
+或一键执行：
+
+```powershell
+.\scripts\workflow-bootstrap-all.ps1
 ```
 
 ---
@@ -154,6 +180,8 @@ bash scripts/workflow-bootstrap-all.sh
 - `CHANGELOG.md`：记录模板更新
 - Manifest 中固定 `ref` 为 tag 或发布分支
 - 对业务项目，推荐通过固定版本升级而非始终跟随 `main`
+- `init` / upgrade apply 后会写入 `.ai/template-version`
+- 升级已有业务项目时先运行 dry-run/diff，再决定是否覆盖
 
 ---
 
@@ -163,8 +191,43 @@ bash scripts/workflow-bootstrap-all.sh
 - 只从团队批准地址拉取仓库
 - 在 manifest 中固定版本号或 tag
 - 模板应用脚本默认 **只创建缺失文件，不覆盖已有文件**
+- 使用 `scripts/verify-vendor-deps.*` 校验外部 vendor tag 与本地安装状态
+- 内部镜像场景只替换 manifest `url`，保持 `ref` 不变
 
 ---
+
+## 升级与校验
+
+Vendor 依赖校验：
+
+```bash
+bash scripts/verify-vendor-deps.sh workflow-repos.manifest.json
+```
+
+```powershell
+.\scripts\verify-vendor-deps.ps1 workflow-repos.manifest.json
+```
+
+模板升级：
+
+```bash
+bash scripts/upgrade-workflow-templates.sh --dry-run
+bash scripts/upgrade-workflow-templates.sh --diff
+bash scripts/upgrade-workflow-templates.sh --apply-safe
+bash scripts/upgrade-workflow-templates.sh --apply --backup
+```
+
+```powershell
+.\scripts\upgrade-workflow-templates.ps1 -DryRun
+.\scripts\upgrade-workflow-templates.ps1 -Diff
+.\scripts\upgrade-workflow-templates.ps1 -ApplySafe
+.\scripts\upgrade-workflow-templates.ps1 -Apply -Backup
+```
+
+详见：
+- `docs/UPGRADE.md`
+- `docs/VENDOR_COMPATIBILITY.md`
+- `REPOSITORY_ROLE.md`
 
 ## 推荐发布流程
 

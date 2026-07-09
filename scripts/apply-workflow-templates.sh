@@ -3,6 +3,26 @@ set -euo pipefail
 
 ROOT_DIR="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 TEMPLATE_DIR="${1:-./templates}"
+FORCE_INIT="${FORCE_INIT:-}"
+
+is_template_source_repo() {
+  [ -f "$ROOT_DIR/templates/CLAUDE.md" ] || return 1
+  [ -f "$ROOT_DIR/docs/ai-workflow/PRD.md" ] && return 1
+  local remote_url
+  remote_url="$(git -C "$ROOT_DIR" remote get-url origin 2>/dev/null || true)"
+  echo "$remote_url" | grep -q "fullstack-ai-workflow"
+}
+
+if is_template_source_repo && [ "$FORCE_INIT" != "1" ]; then
+  echo "[warn] This looks like the template source repository."
+  echo "[warn] Running init here creates duplicate workflow files alongside templates/."
+  echo "[warn] See REPOSITORY_ROLE.md. Set FORCE_INIT=1 to override."
+  exit 1
+fi
+
+if is_template_source_repo && [ "$FORCE_INIT" = "1" ]; then
+  echo "[warn] Proceeding with FORCE_INIT=1 on template source repository."
+fi
 
 copy_if_missing() {
   local src="$1"
@@ -35,5 +55,14 @@ copy_if_missing "$TEMPLATE_DIR/cursor-rules/frontend.mdc" "$ROOT_DIR/.cursor/rul
 copy_if_missing "$TEMPLATE_DIR/cursor-rules/backend-api.mdc" "$ROOT_DIR/.cursor/rules/backend-api.mdc"
 copy_if_missing "$TEMPLATE_DIR/cursor-rules/database.mdc" "$ROOT_DIR/.cursor/rules/database.mdc"
 copy_if_missing "$TEMPLATE_DIR/cursor-rules/deployment.mdc" "$ROOT_DIR/.cursor/rules/deployment.mdc"
+
+mkdir -p "$ROOT_DIR/.ai"
+VERSION="$(cat "$ROOT_DIR/VERSION" 2>/dev/null || echo unknown)"
+APPLIED_AT="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+{
+  echo "fullstack-ai-workflow=$VERSION"
+  echo "applied_at=$APPLIED_AT"
+} > "$ROOT_DIR/.ai/template-version"
+echo "[stamp] $ROOT_DIR/.ai/template-version"
 
 echo "[done] workflow templates applied"
