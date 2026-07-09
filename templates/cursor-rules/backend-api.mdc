@@ -1,0 +1,11 @@
+---
+description: Backend API rules
+globs: services/**/*,apps/api/**/*,server/**/*
+alwaysApply: false
+---
+
+## API
+- Keep handlers thin and business logic in services.
+- Validate inputs and explicit error handling.
+- Add integration tests for changed endpoints.
+- Document contract changes in PR summary.

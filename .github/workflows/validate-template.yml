@@ -1,0 +1,41 @@
+name: Validate Template Repository
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Verify required files exist
+        run: |
+          test -f README.md
+          test -f CHANGELOG.md
+          test -f VERSION
+          test -f workflow-repos.manifest.example.json
+          test -f scripts/bootstrap-workflow.sh
+          test -f scripts/apply-workflow-templates.sh
+          test -f scripts/workflow-dispatch.sh
+          test -f templates/CLAUDE.md
+          test -f templates/AGENTS.md
+          test -f templates/testing.instructions.md
+          test -f templates/claude/workflow.md
+          test -f templates/codex/WORKFLOW.md
+          test -f templates/cursor-rules/shared.mdc
+
+      - name: Verify shell scripts syntax
+        run: |
+          bash -n scripts/bootstrap-workflow.sh
+          bash -n scripts/apply-workflow-templates.sh
+          bash -n scripts/workflow-dispatch.sh
+          bash -n scripts/workflow-bootstrap-all.sh
+          bash -n templates/claude/pre-commit-check.sh
+
+      - name: Verify version format
+        run: |
+          grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$' VERSION

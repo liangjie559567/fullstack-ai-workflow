@@ -1,0 +1,11 @@
+---
+description: Frontend rules
+globs: apps/**/*.{ts,tsx,js,jsx,vue,svelte},packages/ui/**/*,mobile/**/*
+alwaysApply: false
+---
+
+## Frontend
+- Prefer reusable UI patterns.
+- Keep state local unless shared state is necessary.
+- Add component tests for important behaviors.
+- Validate loading, error, empty, success states.

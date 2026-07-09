@@ -1,0 +1,11 @@
+---
+description: Deployment and infra rules
+globs: .github/**/*,infra/**/*,terraform/**/*,k8s/**/*,deploy/**/*
+alwaysApply: false
+---
+
+## Deployment
+- Separate app change from infra change when possible.
+- Always describe blast radius.
+- Require observability and rollback notes.
+- Do not modify production targets without explicit scope.

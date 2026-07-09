@@ -1,0 +1,11 @@
+---
+description: Database rules
+globs: db/**/*,prisma/**/*,migrations/**/*,sql/**/*
+alwaysApply: false
+---
+
+## Database
+- Every schema change needs rollback notes.
+- Avoid destructive migration unless explicitly approved.
+- Update seed or fixtures when required.
+- Verify indexes and query implications for non-trivial changes.

@@ -1,0 +1,19 @@
+---
+description: Shared workflow rules for all tasks
+globs: **/*
+alwaysApply: true
+---
+
+## Workflow
+- Follow Discuss -> Plan -> Slice -> Execute -> Verify -> Ship.
+- Plan before editing on non-trivial tasks.
+- Prefer vertical slices.
+
+## Evidence
+- Never claim success without checks.
+- End with summary, evidence, risks, rollback.
+
+## Safety
+- Do not overwrite workflow files blindly.
+- Do not commit secrets.
+- Do not change deploy config without explicit scope.

@@ -1,0 +1,33 @@
+- name: bug
+  color: 'd73a4a'
+  description: Something is broken
+- name: enhancement
+  color: 'a2eeef'
+  description: Improvement or extension
+- name: feature
+  color: '0e8a16'
+  description: New feature
+- name: docs
+  color: '0075ca'
+  description: Documentation change
+- name: chore
+  color: 'cfd3d7'
+  description: Maintenance task
+- name: major
+  color: 'b60205'
+  description: Major release trigger
+- name: minor
+  color: 'fbca04'
+  description: Minor release trigger
+- name: patch
+  color: '0e8a16'
+  description: Patch release trigger
+- name: breaking-change
+  color: '5319e7'
+  description: Backward incompatible change
+- name: templates
+  color: '1d76db'
+  description: Template-related change
+- name: scripts
+  color: '0052cc'
+  description: Script-related change
